@@ -11,6 +11,7 @@ import org.json.simple.parser.ParseException;
 public class GeoJsonParser {
 	
 	public static long FIRST_ID = 1;
+	public static int NUM_OF_TREES = 111994;
 	
 	/* Tree Json Structure
 	 * 
@@ -34,15 +35,20 @@ public class GeoJsonParser {
 	public static void main(String[] args) {
 
         JSONParser parser = new JSONParser();
-
+        Graph g = new Graph(NUM_OF_TREES);
+        
+        
         try {
 
+        		//open file and get wrapper json
             Object obj = parser.parse(new FileReader("PPR_StreetTrees.geojson"));
             JSONObject jsonObject = (JSONObject) obj;
             
-            JSONArray msg = (JSONArray) jsonObject.get("features");
-            Iterator<JSONObject> iterator = (Iterator<JSONObject>) msg.iterator();
-            long smallest = Long.MAX_VALUE;
+            //get the list of trees
+            JSONArray trees = (JSONArray) jsonObject.get("features");
+            Iterator<JSONObject> iterator = (Iterator<JSONObject>) trees.iterator();
+            long prev = 0;
+            
             while (iterator.hasNext()) {
             	    JSONObject tree = iterator.next();
             	    
@@ -59,8 +65,14 @@ public class GeoJsonParser {
             	    
             	    //System.out.println(id-FIRST_ID + " at (" + lat + " , " + lng + ")");
             	    
+            	    g.addEdge(new Edge((int)prev, (int)id, 0));
+            	    
+            	    //TODO put info into tree object
+            	    //TODO add the tree to a graph
+            	    prev = id;
             }
             
+            System.out.print(g);
             
         } catch (FileNotFoundException e) {
             e.printStackTrace();
