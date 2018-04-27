@@ -1,7 +1,7 @@
 
 
 public class Graph {
-    private static final String NEWLINE = System.getProperty("line.separator");
+    public static final String NEWLINE = System.getProperty("line.separator");
 
     private final int V;
     private int E;
@@ -13,7 +13,8 @@ public class Graph {
      * @param  V the number of vertices
      * @throws IllegalArgumentException if {@code V < 0}
      */
-    public Graph(int V) {
+    @SuppressWarnings("unchecked")
+	public Graph(int V) {
         if (V < 0) throw new IllegalArgumentException("Number of vertices must be nonnegative");
         this.V = V;
         this.E = 0;
