@@ -1,11 +1,11 @@
 
 public class Tree {
 	private int id;
-	private int latitude;
-	private int longitude;
+	private double latitude;
+	private double longitude;
 	private Species species;
 	
-	public Tree(int id, int latitude, int longitude, Species species) {
+	public Tree(int id, double latitude, double longitude, Species species) {
 		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -20,11 +20,11 @@ public class Tree {
 		return this.id;
 	}
 	
-	public int getLat() {
+	public double getLat() {
 		return this.latitude;
 	}
 	
-	public int getLong() {
+	public double getLong() {
 		return this.longitude;
 	}
 	
@@ -41,7 +41,7 @@ public class Tree {
 	
 	@Override
 	public int hashCode() {
-		return this.id + this.latitude + this.longitude;
+		return (this.id);
 	}
 	
 }

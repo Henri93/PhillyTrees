@@ -2,6 +2,8 @@ public class Edge implements Comparable<Edge> {
 
     private final int v;
     private final int w;
+    private final Species vSpec;
+    private final Species wSpec;
     private final double weight;
 
     /**
@@ -15,12 +17,14 @@ public class Edge implements Comparable<Edge> {
      *         is a negative integer
      * @throws IllegalArgumentException if {@code weight} is {@code NaN}
      */
-    public Edge(int v, int w, double weight) {
+    public Edge(int v, Species vSpecies, int w, Species wSpecies, double weight) {
         if (v < 0) throw new IllegalArgumentException("vertex index must be a nonnegative integer");
         if (w < 0) throw new IllegalArgumentException("vertex index must be a nonnegative integer");
         if (Double.isNaN(weight)) throw new IllegalArgumentException("Weight is NaN");
         this.v = v;
         this.w = w;
+        this.vSpec = vSpecies;
+        this.wSpec = wSpecies;
         this.weight = weight;
     }
 
@@ -32,6 +36,25 @@ public class Edge implements Comparable<Edge> {
     public double weight() {
         return weight;
     }
+    
+    /**
+     * Returns the species of the starting vertex.
+     *
+     * @return the species of this vertex
+     */
+    public Species startVertexSpecies() {
+    		return vSpec;
+    }
+    
+    /**
+     * Returns the species of the end vertex.
+     *
+     * @return the species of this vertex
+     */
+    public Species endVertexSpecies() {
+    		return wSpec;
+    }
+    
 
     /**
      * Returns either endpoint of this edge.
@@ -78,6 +101,7 @@ public class Edge implements Comparable<Edge> {
      */
     public String toString() {
         return String.format("%d-%d %.5f", v, w, weight);
+    		//return vSpec + " - " + wSpec;
     }
     
 }
