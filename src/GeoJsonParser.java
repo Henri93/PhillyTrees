@@ -2,6 +2,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -48,6 +51,7 @@ public class GeoJsonParser {
             JSONArray trees = (JSONArray) jsonObject.get("features");
             Iterator<JSONObject> iterator = (Iterator<JSONObject>) trees.iterator();
             Tree prev = null;
+            ArrayList<Tree> treeList = new ArrayList<Tree>();
             
             while (iterator.hasNext()) {
             	    JSONObject tree = iterator.next();
@@ -80,13 +84,17 @@ public class GeoJsonParser {
             	    				 prev.getSpecies(),
             	    				 id,
             	    				 treeObj.getSpecies(),
-            	    				 1));
+            	    				 prev.distanceTo(treeObj)));
             	    }
             	    
+            	    //treeList.add(treeObj);
+            	    
             	    prev = treeObj;
+          
             }
+            //Collections.sort(treeList);
             
-            System.out.print(g);
+            //System.out.print(g);
             
         } catch (FileNotFoundException e) {
             e.printStackTrace();
