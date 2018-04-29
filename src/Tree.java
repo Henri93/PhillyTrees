@@ -43,5 +43,4 @@ public class Tree {
 	public int hashCode() {
 		return this.id + this.latitude + this.longitude;
 	}
-	
 }
