@@ -40,12 +40,12 @@ public class GeoJsonParser {
 
         JSONParser parser = new JSONParser();
         
-        Tree[] treeList = new Tree[NUM_OF_TREES];
+        ArrayList<Tree> treeList = new ArrayList<Tree>();
         
         JSONObject jsonObj = new JSONObject();
 		
         JSONObject jsonObject;
-        
+        int index = 0;
         
         try {
 
@@ -88,8 +88,10 @@ public class GeoJsonParser {
             	    }
             	    
             	    Tree treeObj = new Tree(id, lat, lng, treeSpecies);
-            	    treeList[id] = treeObj;
             	    
+            	    treeList.add(treeObj);
+            	    
+            	    index++;
             	    //System.out.println(treeObj);
             	    
             	    //used to make the dataset
@@ -149,7 +151,9 @@ public class GeoJsonParser {
             e.printStackTrace();
         }
         
-        return treeList; 
+        Tree[] stockArr = new Tree[treeList.size()];
+        stockArr = treeList.toArray(stockArr);
+        return stockArr; 
 
     }
 }
