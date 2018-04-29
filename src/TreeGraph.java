@@ -1,3 +1,5 @@
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class TreeGraph {
 	private Graph G;
@@ -28,7 +30,7 @@ public class TreeGraph {
 		double latRange = (maxLat - minLat);
 		double longRange = (maxLong - minLong);
 		
-		if (g == null) {
+		if (g != null) {
 			PennDraw.setPenColor(PennDraw.BLACK);
 			PennDraw.setPenRadius(0.001);
 			for (Edge e : g.edges()) {
@@ -46,16 +48,56 @@ public class TreeGraph {
 		}
 	}
 	
-	public Tree findClosestTree(double lat, double longitude) {
+	//Finds closest tree to the specified location
+	public Tree findClosestTree(double lat, double longitude, Species s) {
 		Tree position = new Tree(1, lat, longitude, Species.GINKGO);
 		double minDist = Double.MAX_VALUE;
 		Tree closestTree = null;
 		for (Tree t : trees) {
-			closestTree = (position.distanceTo(t) < minDist) ? t : closestTree;
-			minDist = (position.distanceTo(t) < minDist) ? position.distanceTo(t) : minDist;
+			if (s != null && t.getSpecies() == s) {
+				closestTree = (position.distanceTo(t) < minDist) ? t : closestTree;
+				minDist = (position.distanceTo(t) < minDist) ? position.distanceTo(t) : minDist;
+			}
 		}
 		return closestTree;
 	}
+	
+	/*returns a hashmap of the species, int pairs pertaining to the amount of trees of each species that are
+	 * within 100 meters of the specified location. 
+	 */
+	public HashMap<Species, Integer> getTreesAroundMe(double lat, double longitude) {
+		Tree position = new Tree(-1, lat, longitude, null);
+		HashMap<Species, Integer> treeCounts = new HashMap<Species, Integer>();
+		for (Tree t: trees) {
+			if (t.distanceTo(position) < 100) {
+				if (!treeCounts.containsKey(t.getSpecies())) {
+					treeCounts.put(t.getSpecies(), 1);
+				} else {
+					treeCounts.put(t.getSpecies(), treeCounts.get(t.getSpecies()) + 1);
+				}
+			}
+		}
+		return treeCounts;
+	}
+	
+//	public Graph hamiltonianPath(Tree s) {
+//		HashSet<Tree> visited = new HashSet<Tree>();
+//		Tree curr = s;
+//		Tree next = null;
+//		Graph path = new Graph(trees.length);
+//		double dist = Double.MAX_VALUE;
+//		while(visited.size() < trees.length) {
+//			for (Tree t : trees) {
+//				if (!visited.contains(t) && t.distanceTo(curr) < dist) {
+//					next = t;
+//					dist = t.distanceTo(curr);
+//				}
+//			}
+//			visited.add(next);
+//			curr = next;
+//			next = null;
+//		}
+//	}
 	
 	public static void main(String[] args) {
 		

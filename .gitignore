@@ -6,3 +6,7 @@
 /Graph.class
 /Species.class
 /Tree.class
+.DS_Store
+.settings/
+/bin/
+/target/
