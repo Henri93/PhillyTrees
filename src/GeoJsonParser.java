@@ -1,10 +1,9 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
+import java.util.Iterator;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -25,7 +24,7 @@ public class GeoJsonParser {
 	 * 		      },
 	 * 
 	 * "type": "Feature",
-	 * 		   "properties":
+	 * "properties":
 	 * 			{
 	 * 				"OBJECTID":12714,
 	 * 				"STATUS":null,
@@ -40,6 +39,10 @@ public class GeoJsonParser {
         JSONParser parser = new JSONParser();
         Graph g = new Graph(NUM_OF_TREES);
         
+        JSONObject jsonObj = new JSONObject();
+		
+		
+        
         
         try {
 
@@ -51,7 +54,7 @@ public class GeoJsonParser {
             JSONArray trees = (JSONArray) jsonObject.get("features");
             Iterator<JSONObject> iterator = (Iterator<JSONObject>) trees.iterator();
             Tree prev = null;
-            ArrayList<Tree> treeList = new ArrayList<Tree>();
+            ArrayList<JSONObject> jsons = new ArrayList<JSONObject>();
             
             while (iterator.hasNext()) {
             	    JSONObject tree = iterator.next();
@@ -76,22 +79,49 @@ public class GeoJsonParser {
             	    
             	    Tree treeObj = new Tree(id, lat, lng, treeSpecies);
             	    //System.out.println(treeObj);
+            	    
+            	    JSONArray geometryJson = new JSONArray();
+            	    geometryJson.add("coordinates: [" + lng + "," + lat + "]");
+            	    geometryJson.add("type: Point");
+            		
+            		JSONArray prop = new JSONArray();
+            		prop.add("OBJECTID: " + id);
+            		prop.add("SPECIES: " + treeSpecies);
+            		
+            		jsonObj.put("properties", prop);
+            		jsonObj.put("geometry", geometryJson);
+            		
+            		jsons.add(jsonObj);
+            		
              
             	    //add edge between prev tree and current tree
-            	    if(prev != null) {
+            	    /*if(prev != null) {
             	    		g.addEdge(new Edge(
             	    				 prev.getId(),          
             	    				 prev.getSpecies(),
             	    				 id,
             	    				 treeObj.getSpecies(),
             	    				 prev.distanceTo(treeObj)));
-            	    }
+            	    }*/
             	    
             	    //treeList.add(treeObj);
             	    
             	    prev = treeObj;
           
             }
+            
+            try (FileWriter file = new FileWriter("PhillyTree.geojson")) {
+            		
+            		for(JSONObject json : jsons) {
+            			file.write(json.toJSONString());
+                }
+    			
+    				System.out.println("Successfully Copied JSON Object to File...");
+  
+    			}catch(Exception e) {
+    				e.printStackTrace();
+    			}
+            
             //Collections.sort(treeList);
             
             //System.out.print(g);

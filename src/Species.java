@@ -10,6 +10,8 @@ public enum Species {
 	SUGAR_MAPLE,
 	CHERRY;
 	
+	//This is for selecting a random Species
+	//Cache a lsit of species values
 	private static final List<Species> VALUES = Collections.unmodifiableList(Arrays.asList(values()));
 	 
 	private static final int SIZE = VALUES.size();
