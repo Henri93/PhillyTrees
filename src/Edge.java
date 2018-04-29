@@ -2,8 +2,8 @@ public class Edge implements Comparable<Edge> {
 
     private final int v;
     private final int w;
-    private final Species vSpec;
-    private final Species wSpec;
+//    private final Species vSpec;
+//    private final Species wSpec;
     private final double weight;
 
     /**
@@ -17,14 +17,14 @@ public class Edge implements Comparable<Edge> {
      *         is a negative integer
      * @throws IllegalArgumentException if {@code weight} is {@code NaN}
      */
-    public Edge(int v, Species vSpecies, int w, Species wSpecies, double weight) {
+    public Edge(int v, int w, double weight) {
         if (v < 0) throw new IllegalArgumentException("vertex index must be a nonnegative integer");
         if (w < 0) throw new IllegalArgumentException("vertex index must be a nonnegative integer");
         if (Double.isNaN(weight)) throw new IllegalArgumentException("Weight is NaN");
         this.v = v;
         this.w = w;
-        this.vSpec = vSpecies;
-        this.wSpec = wSpecies;
+//        this.vSpec = vSpecies;
+//        this.wSpec = wSpecies;
         this.weight = weight;
     }
 
@@ -42,18 +42,18 @@ public class Edge implements Comparable<Edge> {
      *
      * @return the species of this vertex
      */
-    public Species startVertexSpecies() {
-    		return vSpec;
-    }
-    
-    /**
-     * Returns the species of the end vertex.
-     *
-     * @return the species of this vertex
-     */
-    public Species endVertexSpecies() {
-    		return wSpec;
-    }
+//    public Species startVertexSpecies() {
+//    		return vSpec;
+//    }
+//    
+//    /**
+//     * Returns the species of the end vertex.
+//     *
+//     * @return the species of this vertex
+//     */
+//    public Species endVertexSpecies() {
+//    		return wSpec;
+//    }
     
 
     /**
