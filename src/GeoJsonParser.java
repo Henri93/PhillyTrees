@@ -35,10 +35,12 @@ public class GeoJsonParser {
 	 * }
 	 */
 	
-	public static void main(String[] args) {
+	public static Tree[] parseTreeData() {
+		
 
         JSONParser parser = new JSONParser();
         
+        Tree[] treeList = new Tree[NUM_OF_TREES];
         
         JSONObject jsonObj = new JSONObject();
 		
@@ -57,7 +59,7 @@ public class GeoJsonParser {
             Iterator<JSONObject> iterator = (Iterator<JSONObject>) trees.iterator();
             Tree prev = null;
             ArrayList<JSONObject> jsons = new ArrayList<JSONObject>();
-            Tree[] treeList = new Tree[NUM_OF_TREES];
+            
             
             
             while (iterator.hasNext()) {
@@ -136,7 +138,7 @@ public class GeoJsonParser {
     			}catch(Exception e) {
     			 	e.printStackTrace();
     			}*/
-            
+           
            
             
         } catch (FileNotFoundException e) {
@@ -146,6 +148,8 @@ public class GeoJsonParser {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        
+        return treeList; 
 
     }
 }
