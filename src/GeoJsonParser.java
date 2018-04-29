@@ -15,6 +15,7 @@ public class GeoJsonParser {
 	public static long FIRST_ID = 1;
 	public static int NUM_OF_TREES = 111994;
 	
+	
 	/* Tree Json Structure
 	 * 
 	 * {
@@ -37,24 +38,27 @@ public class GeoJsonParser {
 	public static void main(String[] args) {
 
         JSONParser parser = new JSONParser();
-        Graph g = new Graph(NUM_OF_TREES);
+        
         
         JSONObject jsonObj = new JSONObject();
 		
-		
+        JSONObject jsonObject;
         
         
         try {
 
         		//open file and get wrapper json
-            Object obj = parser.parse(new FileReader("PPR_StreetTrees.geojson"));
-            JSONObject jsonObject = (JSONObject) obj;
+            //Object obj = parser.parse(new FileReader("PPR_StreetTrees.geojson"));
+            Object obj = parser.parse(new FileReader("PhillyTree.geojson"));
+            jsonObject = (JSONObject) obj;
             
             //get the list of trees
             JSONArray trees = (JSONArray) jsonObject.get("features");
             Iterator<JSONObject> iterator = (Iterator<JSONObject>) trees.iterator();
             Tree prev = null;
             ArrayList<JSONObject> jsons = new ArrayList<JSONObject>();
+            Tree[] treeList = new Tree[NUM_OF_TREES];
+            
             
             while (iterator.hasNext()) {
             	    JSONObject tree = iterator.next();
@@ -71,16 +75,23 @@ public class GeoJsonParser {
             	    int id = Integer.valueOf(properties.get("OBJECTID").toString());
             	    
             	    String speciesString = (String) properties.get("SPECIES");
+            	  
             	    Species treeSpecies = Species.GINKGO;
+            	    
             	    if(speciesString == null) {
             	    		//generate random species
+            	    		properties.remove("SPECIES");
             	    		treeSpecies = Species.randomSpecies();
+            	    		properties.put("SPECIES", "\""+treeSpecies+"\"");
             	    }
             	    
             	    Tree treeObj = new Tree(id, lat, lng, treeSpecies);
+            	    treeList[id] = treeObj;
+            	    
             	    //System.out.println(treeObj);
             	    
-            	    JSONArray geometryJson = new JSONArray();
+            	    //used to make the dataset
+            	    /*JSONArray geometryJson = new JSONArray();
             	    geometryJson.add("coordinates: [" + lng + "," + lat + "]");
             	    geometryJson.add("type: Point");
             		
@@ -91,7 +102,7 @@ public class GeoJsonParser {
             		jsonObj.put("properties", prop);
             		jsonObj.put("geometry", geometryJson);
             		
-            		jsons.add(jsonObj);
+            		jsons.add(jsonObj);*/
             		
              
             	    //add edge between prev tree and current tree
@@ -104,27 +115,29 @@ public class GeoJsonParser {
             	    				 prev.distanceTo(treeObj)));
             	    }*/
             	    
-            	    //treeList.add(treeObj);
-            	    
+            	   
+            	    //jsons.add(tree);
             	    prev = treeObj;
           
             }
             
-            try (FileWriter file = new FileWriter("PhillyTree.geojson")) {
-            		
-            		for(JSONObject json : jsons) {
-            			file.write(json.toJSONString());
-                }
-    			
+          
+            
+            //used to make the better dataset
+            /*try (FileWriter file = new FileWriter("PhillyTree.geojson")) {
+            		file.write(jsonObject.toJSONString());
+            		//file.write("{\"type\":\"FeatureCollection\",\"features\":[");
+            		//for(JSONObject json : jsons) {
+            		//	file.write(json.toJSONString());
+                //}
+            		//file.write("]}");
     				System.out.println("Successfully Copied JSON Object to File...");
   
     			}catch(Exception e) {
-    				e.printStackTrace();
-    			}
+    			 	e.printStackTrace();
+    			}*/
             
-            //Collections.sort(treeList);
-            
-            //System.out.print(g);
+           
             
         } catch (FileNotFoundException e) {
             e.printStackTrace();
