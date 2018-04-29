@@ -2,6 +2,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -47,7 +50,8 @@ public class GeoJsonParser {
             //get the list of trees
             JSONArray trees = (JSONArray) jsonObject.get("features");
             Iterator<JSONObject> iterator = (Iterator<JSONObject>) trees.iterator();
-            long prev = 0;
+            Tree prev = null;
+            ArrayList<Tree> treeList = new ArrayList<Tree>();
             
             while (iterator.hasNext()) {
             	    JSONObject tree = iterator.next();
@@ -60,19 +64,37 @@ public class GeoJsonParser {
             	   
             	    //get species information and id
             	    JSONObject properties = (JSONObject) tree.get("properties");
-            	    long id = (long) properties.get("OBJECTID");
-            	    String species = (String) properties.get("SPECIES");
+            	   
+            	    int id = Integer.valueOf(properties.get("OBJECTID").toString());
             	    
-            	    //System.out.println(id-FIRST_ID + " at (" + lat + " , " + lng + ")");
+            	    String speciesString = (String) properties.get("SPECIES");
+            	    Species treeSpecies = Species.GINKGO;
+            	    if(speciesString == null) {
+            	    		//generate random species
+            	    		treeSpecies = Species.randomSpecies();
+            	    }
             	    
-            	    g.addEdge(new Edge((int)prev, (int)id, 0));
+            	    Tree treeObj = new Tree(id, lat, lng, treeSpecies);
+            	    //System.out.println(treeObj);
+             
+            	    //add edge between prev tree and current tree
+            	    if(prev != null) {
+            	    		g.addEdge(new Edge(
+            	    				 prev.getId(),          
+            	    				 prev.getSpecies(),
+            	    				 id,
+            	    				 treeObj.getSpecies(),
+            	    				 prev.distanceTo(treeObj)));
+            	    }
             	    
-            	    //TODO put info into tree object
-            	    //TODO add the tree to a graph
-            	    prev = id;
+            	    //treeList.add(treeObj);
+            	    
+            	    prev = treeObj;
+          
             }
+            //Collections.sort(treeList);
             
-            System.out.print(g);
+            //System.out.print(g);
             
         } catch (FileNotFoundException e) {
             e.printStackTrace();
