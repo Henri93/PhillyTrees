@@ -5,13 +5,16 @@ public class TreeGraph {
 	
 	public TreeGraph(Tree[] trees) {
 		this.trees = trees;
-		this.G =new Graph(trees.length);
-		for (int i = 0; i < trees.length; i++) {
-			for (int j = i; j < trees.length; j++) {
-				Edge e = new Edge(i, j, trees[i].distanceTo(trees[j]));
-				G.addEdge(e);
-			}
-		}
+//		this.G =new Graph(trees.length - 1);
+//		
+//		for (int i = 0; i < trees.length - 1; i++) {
+//			for (int j = i; j < trees.length - 1; j++) {
+//				//System.out.println(trees[i]);
+//				//System.out.println(trees[j]);
+//				//Edge e = new Edge(i, j, trees[i].distanceTo(trees[j]));
+//				//G.addEdge(e);
+//			}
+//		}
 	}
 	
 	public void draw(Graph g) {
@@ -25,10 +28,11 @@ public class TreeGraph {
 			maxLat = Double.max(maxLat, t.getLat());
 			maxLong = Double.max(maxLong, t.getLong());
 		}
+		
 		double latRange = (maxLat - minLat);
 		double longRange = (maxLong - minLong);
 		
-		if (g == null) {
+		if (g != null) {
 			PennDraw.setPenColor(PennDraw.BLACK);
 			PennDraw.setPenRadius(0.001);
 			for (Edge e : g.edges()) {
@@ -40,9 +44,12 @@ public class TreeGraph {
 		}
 		
 		PennDraw.setPenColor(PennDraw.GREEN);
-		PennDraw.setPenRadius(0.01);
+		PennDraw.setPenRadius(0.001);
+		int count = 0;
 		for (Tree t: trees) {
-			PennDraw.point((t.getLat() - minLat) / latRange, (t.getLong() - minLong) / longRange);
+			count++;
+			PennDraw.point((t.getLat() - minLat), (t.getLong() - minLong));
+			System.out.println("Trees Plotted: " + count);
 		}
 	}
 	
