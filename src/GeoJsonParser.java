@@ -63,7 +63,10 @@ public class GeoJsonParser {
             
             
             while (iterator.hasNext()) {
-            	    JSONObject tree = iterator.next();
+            	JSONObject tree = iterator.next();
+	            	for (int i = 0; i < 20; i++) {
+	            	    if (iterator.hasNext()) tree = iterator.next();
+	            	}
             	    
             	    //get location in terms of latitude and longitude
             	    JSONObject geometry = (JSONObject) tree.get("geometry");

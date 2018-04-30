@@ -2,15 +2,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class TreeGraph {
-	private Graph G;
-	private Tree[] trees;
+	public Tree[] trees;
 	
 	public TreeGraph(Tree[] trees) {
 		this.trees = trees;
-//		this.G =new Graph(trees.length - 1);
+//		this.G =new Graph(trees.length);
 //		
-//		for (int i = 0; i < trees.length - 1; i++) {
-//			for (int j = i; j < trees.length - 1; j++) {
+//		for (int i = 0; i < trees.length; i++) {
+//			for (int j = i; j < trees.length; j++) {
 //				//System.out.println(trees[i]);
 //				//System.out.println(trees[j]);
 //				//Edge e = new Edge(i, j, trees[i].distanceTo(trees[j]));
@@ -19,11 +18,14 @@ public class TreeGraph {
 //		}
 	}
 	
+	/*
+	 * Draws given graph with green vertices and black edges.
+	 */
 	public void draw(Graph g) {
 		double minLat = Double.MAX_VALUE;
 		double minLong = Double.MAX_VALUE;
-		double maxLat = Double.MIN_VALUE;
-		double maxLong = Double.MIN_VALUE;
+		double maxLat = -Double.MAX_VALUE;
+		double maxLong = -Double.MAX_VALUE;
 		for (Tree t : trees) {
 			minLat = Double.min(minLat, t.getLat());
 			minLong = Double.min(minLong, t.getLong());
@@ -34,24 +36,24 @@ public class TreeGraph {
 		double latRange = (maxLat - minLat);
 		double longRange = (maxLong - minLong);
 		
-		if (g != null) {
-			PennDraw.setPenColor(PennDraw.BLACK);
-			PennDraw.setPenRadius(0.001);
-			for (Edge e : g.edges()) {
-				int v = e.either();
-				int u = e.other(v);
-				PennDraw.line((trees[u].getLat() - minLat) / latRange, (trees[u].getLong() - minLong) / longRange, 
-						(trees[v].getLat() - minLat) / latRange, (trees[v].getLong() - minLong) / longRange);
-			}
-		}
-		
 		PennDraw.setPenColor(PennDraw.GREEN);
-		PennDraw.setPenRadius(0.001);
+		PennDraw.setPenRadius(0.003);
 		int count = 0;
 		for (Tree t: trees) {
 			count++;
-			PennDraw.point((t.getLat() - minLat), (t.getLong() - minLong));
-			System.out.println("Trees Plotted: " + count);
+			PennDraw.point( (t.getLong() - minLong) / longRange, (t.getLat() - minLat) / latRange);
+			//if (count % 1000 == 0) System.out.println("Trees Plotted: " + count);
+		}
+		
+		if (g != null) {
+			PennDraw.setPenColor(PennDraw.BLACK);
+			PennDraw.setPenRadius(0.0005);
+			for (Edge e : g.edges()) {
+				int v = e.either();
+				int u = e.other(v);
+				PennDraw.line((trees[u].getLong() - minLong) / longRange, (trees[u].getLat() - minLat) / latRange, 
+						(trees[v].getLong() - minLong) / longRange, (trees[v].getLat() - minLat) / latRange);
+			}
 		}
 	}
 	
@@ -62,6 +64,9 @@ public class TreeGraph {
 		Tree closestTree = null;
 		for (Tree t : trees) {
 			if (s != null && t.getSpecies() == s) {
+				closestTree = (position.distanceTo(t) < minDist) ? t : closestTree;
+				minDist = (position.distanceTo(t) < minDist) ? position.distanceTo(t) : minDist;
+			} else if (s == null) {
 				closestTree = (position.distanceTo(t) < minDist) ? t : closestTree;
 				minDist = (position.distanceTo(t) < minDist) ? position.distanceTo(t) : minDist;
 			}
@@ -87,29 +92,39 @@ public class TreeGraph {
 		return treeCounts;
 	}
 	
-//	public Graph hamiltonianPath(Tree s) {
-//		HashSet<Tree> visited = new HashSet<Tree>();
-//		Tree curr = s;
-//		Tree next = null;
-//		Graph path = new Graph(trees.length);
-//		double dist = Double.MAX_VALUE;
-//		while(visited.size() < trees.length) {
-//			for (Tree t : trees) {
-//				if (!visited.contains(t) && t.distanceTo(curr) < dist) {
-//					next = t;
-//					dist = t.distanceTo(curr);
-//				}
-//			}
-//			visited.add(next);
-//			curr = next;
-//			next = null;
-//		}
-//	}
+	public int indexOf(Tree t) {
+		for (int i = 0; i < trees.length; i++) {
+			if (trees[i] == t) return i;
+		}
+		return -1;
+	}
+	
+	//Uses simple closest neighbor heuristic to calculate the hamiltonian path through all the trees
+	public Graph hamiltonianPath(Tree s) {
+		HashSet<Tree> visited = new HashSet<Tree>();
+		Tree curr = s;
+		Graph path = new Graph(trees.length);
+		while(visited.size() < trees.length - 1) {
+			Tree next = null;
+			double dist = Double.MAX_VALUE;
+			for (Tree t : trees) {
+				if (!visited.contains(t) && t.distanceTo(curr) < dist && t != curr) {
+					next = t;
+					dist = t.distanceTo(curr);
+				}
+			}
+			if (next == null) System.out.println(indexOf(curr));
+			path.addEdge(new Edge(indexOf(curr), indexOf(next), 1));
+			visited.add(next);
+			curr = next;
+		}
+		return path;
+	}
 	
 	public static void main(String[] args) {
 		
 		TreeGraph treeG = new TreeGraph(GeoJsonParser.parseTreeData());
 		
-		treeG.draw(null);
+		treeG.draw(treeG.hamiltonianPath(treeG.trees[0]));
 	}
 }
