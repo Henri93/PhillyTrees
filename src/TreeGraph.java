@@ -1,27 +1,23 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Random;
 
 public class TreeGraph {
 	public Tree[] trees;
+	public Graph graph;
 	
 	public TreeGraph(Tree[] trees) {
 		this.trees = trees;
-//		this.G =new Graph(trees.length);
-//		
-//		for (int i = 0; i < trees.length; i++) {
-//			for (int j = i; j < trees.length; j++) {
-//				//System.out.println(trees[i]);
-//				//System.out.println(trees[j]);
-//				//Edge e = new Edge(i, j, trees[i].distanceTo(trees[j]));
-//				//G.addEdge(e);
-//			}
-//		}
+		this.graph = new Graph(trees.length);
+		
 	}
 	
 	/*
 	 * Draws given graph with green vertices and black edges.
 	 */
 	public void draw(Graph g) {
+		
 		double minLat = Double.MAX_VALUE;
 		double minLong = Double.MAX_VALUE;
 		double maxLat = -Double.MAX_VALUE;
@@ -37,7 +33,13 @@ public class TreeGraph {
 		double longRange = (maxLong - minLong);
 		
 		PennDraw.setPenColor(PennDraw.GREEN);
-		PennDraw.setPenRadius(0.003);
+		//scale based on number of trees to draw
+		if(trees.length < 100) {
+			PennDraw.setPenRadius(0.01);
+		}else{
+			PennDraw.setPenRadius(0.003);
+		}
+		
 		int count = 0;
 		for (Tree t: trees) {
 			count++;
@@ -46,8 +48,13 @@ public class TreeGraph {
 		}
 		
 		if (g != null) {
-			PennDraw.setPenColor(PennDraw.BLACK);
-			PennDraw.setPenRadius(0.0005);
+			if(g.E() < 100) {
+				PennDraw.setPenColor(PennDraw.RED);
+				PennDraw.setPenRadius(0.0025);
+			}else {
+				PennDraw.setPenColor(PennDraw.BLACK);
+				PennDraw.setPenRadius(0.0005);
+			}
 			for (Edge e : g.edges()) {
 				int v = e.either();
 				int u = e.other(v);
@@ -77,11 +84,11 @@ public class TreeGraph {
 	/*returns a hashmap of the species, int pairs pertaining to the amount of trees of each species that are
 	 * within 100 meters of the specified location. 
 	 */
-	public HashMap<Species, Integer> getTreesAroundMe(double lat, double longitude) {
+	public HashMap<Species, Integer> getTreesAroundMe(double lat, double longitude, int radius) {
 		Tree position = new Tree(-1, lat, longitude, null);
 		HashMap<Species, Integer> treeCounts = new HashMap<Species, Integer>();
 		for (Tree t: trees) {
-			if (t.distanceTo(position) < 100) {
+			if (t.distanceTo(position) < radius) {
 				if (!treeCounts.containsKey(t.getSpecies())) {
 					treeCounts.put(t.getSpecies(), 1);
 				} else {
@@ -90,6 +97,53 @@ public class TreeGraph {
 			}
 		}
 		return treeCounts;
+	}
+	
+	/* returns a list of the trees in a route with a specific number of a species
+	 */
+	public TreeGraph getRouteReccomendation(Tree closestTree, Species s, int speciesCount) {
+		ArrayList<Tree> route = new ArrayList<Tree>();
+		route.add(closestTree);
+		speciesCount--;
+		Tree treeToAddToRoute = closestTree;
+		Random r = new Random();
+		while(speciesCount > 1) {
+			int searchRadius = 600;
+			
+			for (Tree t: trees) {
+				if(route.contains(t)) {
+					continue;
+				}
+				if (t.distanceTo(treeToAddToRoute) < searchRadius) {
+					treeToAddToRoute = t;
+					searchRadius = searchRadius / 2;
+					if(r.nextDouble() < .1) {
+						break;
+					}
+				}
+			}
+			if(treeToAddToRoute != null && treeToAddToRoute.getSpecies() == s) {
+				speciesCount--;
+			}
+			if(treeToAddToRoute != null && !route.contains(treeToAddToRoute)) {
+				route.add(treeToAddToRoute);
+			}
+			
+		}
+		
+		Tree[] stockArr = new Tree[route.size()];
+        stockArr = route.toArray(stockArr);
+        TreeGraph treeRoute = new TreeGraph(stockArr);
+        
+		Tree prev = null;
+		for(Tree t : route) {
+			if(prev != null) {
+				treeRoute.graph.addEdge(new Edge(route.indexOf(prev), route.indexOf(t), 1));
+			}
+			prev = t;
+		}
+		
+		return treeRoute;
 	}
 	
 	public int indexOf(Tree t) {
@@ -120,11 +174,5 @@ public class TreeGraph {
 		}
 		return path;
 	}
-	
-	public static void main(String[] args) {
-		
-		TreeGraph treeG = new TreeGraph(GeoJsonParser.parseTreeData());
-		
-		treeG.draw(treeG.hamiltonianPath(treeG.trees[0]));
-	}
+
 }

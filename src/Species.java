@@ -26,7 +26,7 @@ public enum Species {
 		case "ALASKAN_CEDAR": return ALASKAN_CEDAR;
 		case "GINKGO": return GINKGO;
 		case "KOUSA_DOGWOOD": return KOUSA_DOGWOOD;
-		case "SOUTHERN_MAHNOLIA": return SOUTHERN_MAGNOLIA;
+		case "SOUTHERN_MAGNOLIA": return SOUTHERN_MAGNOLIA;
 		case "WHITE_BIRCH" : return WHITE_BIRCH;
 		case "ZELKOVA" : return ZELKOVA;
 		case "SUGAR_MAPLE" : return SUGAR_MAPLE;

@@ -79,20 +79,19 @@ public class GeoJsonParser {
             	   
             	    int id = Integer.valueOf(properties.get("OBJECTID").toString());
             	    
-            	    String speciesString = (String) properties.get("SPECIES");
-            	  
-            	    Species treeSpecies = Species.GINKGO;
+            	    String speciesString = ((String) properties.get("SPECIES")).replaceAll("\"", "");
+            	    Species treeSpecies = Species.parseSpecies(speciesString);
+            	    	
+            	    //generate random species
+            	    	/*properties.remove("SPECIES");
+            	    	Species treeSpecies = Species.randomSpecies();
+            	    	properties.put("SPECIES", ""+treeSpecies+"");*/
             	    
-            	    if(speciesString == null) {
-            	    		//generate random species
-            	    		properties.remove("SPECIES");
-            	    		treeSpecies = Species.randomSpecies();
-            	    		properties.put("SPECIES", "\""+treeSpecies+"\"");
-            	    }
             	    
             	    Tree treeObj = new Tree(id, lat, lng, treeSpecies);
             	    
             	    treeList.add(treeObj);
+            	    
             	    
             	    index++;
             	    //System.out.println(treeObj);
