@@ -34,8 +34,8 @@ Work Breakdown:
                   Henry:
                     1. Creation of Graph Data Structure and methods
                     2. Create information retrieval methods to parse dataset into Graph Data Structure
-                    3. Writing to new data file for ease of parsing
-                    4. Implement Recommendation algorithms
+                    3. Implement Recommendation algorithms 
+                    4. Creation of User Manual/Summary
 
 
 
