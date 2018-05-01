@@ -1,0 +1,41 @@
+Names: Henry Garant, Taras Bukachevskyy
+Project Name: Philly Trees
+Project Description: A visualization and data program that answers questions about trees in Philadelphia. 
+                     The project answers questions such as "What types of trees are in my area?" or
+                     "What route should I take if I want to see 15 GINKGO trees?". 
+                     The data set was taken from OpenDataPhilly(link below); 
+                     then we wrote programs to parse and clean the data.
+                     Finally, we make a graph with the data to answer interesting questions.
+                     We were motivated to use real world data that applied to us, so trees seemed interesting.
+                     The project is written in Java and compiles dependencies with Maven.
+Link to data: https://www.opendataphilly.org/dataset/philadelphia-street-tree-inventory
+
+Project Categories: 
+                    1. Graph and Graph Algorithms:
+                       We constructed a graph with all the trees as vertices and added edges between all trees.
+                       We used Graph algorithms to answer interesting questions. For example, we completed a BFS search
+                       and even an approximation for Hamiltonian path that visits all trees.
+                       
+                    2. Document Search(Information Retrieval):
+                       We retrieved all tree information by parsing the geojson dataset and creating Tree objects from the data.
+                       
+                    3. Recommendations:
+                       We wrote recommendation algorithms to recommended routes through the city if you want to see
+                       certain trees. One recommendation algorithm we wrote found which species of tree is the least
+                       popular in your area then recommended a route to take to see more of those species of trees.
+                       
+Work Breakdown:
+                  Taras:
+                    1. Creating necessary objects other than Graph (i.e Tree, Edge)
+                    2. Implementing DFS, BFS, and Topsort along with Algorithms that implement these.
+                    3. Receiving question selection and passing parameters from question to functions
+                    4. Drawing Graph functions
+                    
+                  Henry:
+                    1. Creation of Graph Data Structure and methods
+                    2. Create information retrieval methods to parse dataset into Graph Data Structure
+                    3. Writing to new data file for ease of parsing
+                    4. Implement Recommendation algorithms
+
+
+
